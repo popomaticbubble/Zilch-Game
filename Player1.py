@@ -32,7 +32,6 @@ class Player:
 		dice_roll = sorted([random.randint(1,6)
 		for i in range(1, remaining_dice+1)])
 		self.roll_number +=1
-		print(self.roll_number)
 		return dice_roll, self.roll_number
 
 	@staticmethod
@@ -56,6 +55,7 @@ Press enter to keep everything.
 > """).split(',')
 				except IndexError:
 					print("That is not an available die.")
+				#create an error in case people enter something stupid, use RE
 				else:
 					break
 			if kept_dice == ['']: #keeps all the dice if nothing is entered above
@@ -78,7 +78,9 @@ Press enter to keep everything.
 		"""Saves the points from the round to the player and
 		clears the round points."""
 		self.points += self.round_points
+		print(f"You've scored {self.round_points} this turn.")
 		self.round_points = 0
+		print(f"You now have {self.points} total.")
 		return self.points, self.round_points
 
 	def DiceCounter(self, dice_roll):
@@ -111,7 +113,7 @@ Press enter to keep everything.
 		turn end when the player either: chooses to stop rolling,
 		has a roll with no points, or reaches three rolls without
 		a bonus. The points from the round are added to the player."""
-		while self.roll_number <=3:
+		while self.roll_number <3:
 			dice_roll, self.roll_number = self.roll()
 			"""We need to check if the intial roll is zilched.
 			if so, there is no point asking if they want to
@@ -127,15 +129,17 @@ Press enter to keep everything.
 			score.MasterScorer()
 			print(f"You scored {score.roll_points}! Great job!")
 			self.round_points += score.roll_points
-			print(score.bonus_round)
 			self.ResetDice()
 			msg = "Would you like to roll again (y/n)? "
-			#if score.bonus_round == True:
-				#self.roll_number = 0
 			if self.remaining_dice == 0:
 				self.roll_number = 0
-			elif self.AreYouSure(msg) == False:
+				self.remaining_dice = 6
+				print({self.roll_number}, {self.remaining_dice})
+			elif self.roll_number == 3: #You are only allowed three rolls
 				break
+			else:
+				if self.AreYouSure(msg) == False:
+					break
 		self.KeepPoints()
 
 

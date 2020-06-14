@@ -8,21 +8,16 @@ class Score():
 	def __init__(self, dice):
 		self.dice = dice
 		self.roll_points = 0
-		self.bonus_round = True
 		self.zilched = False
 
-	def TurnOffBonusRound(self):
-		self.bonus_round = False
-		return self.bonus_round
-
-	def StraightChecker(self):
-		if all(self.dice.values()) ==1:
+	def straight_checker(self):
+		if all(self.dice.values()) == 1:
 			self.roll_points += 1000
 			self.dice = {}
 			return self.roll_points, self.dice
 		pass
 
-	def OneChecker(self):
+	def one_checker(self):
 		"""For every 1, you get 100 points,
 			Three 1's, you get 1000 points,
 			for every 1 after that, there is an
@@ -31,11 +26,11 @@ class Score():
 			all 1 from the dice list"""
 		ones = self.dice.get(1)
 		if ones:
-			if ones <=2:
+			if ones <= 2:
 				self.roll_points += ones*100
 				self.dice.pop(1)
 				return self.roll_points, self.dice
-			self.roll_points +=1000
+			self.roll_points += 1000
 			if ones == 4: 
 				self.roll_points *= 2
 			elif ones == 5: 
@@ -46,7 +41,7 @@ class Score():
 			return self.roll_points, self.dice
 		pass
 
-	def FiveChecker(self):
+	def five_checker(self):
 		"""For every 5, you get 50 points,
 			Three 5's, you get 50 points,
 			for every 5 after that, there is an
@@ -56,11 +51,11 @@ class Score():
 
 		fives = self.dice.get(5)
 		if fives:
-			if fives <=2:
-				self.roll_points += fives *50
+			if fives <= 2:
+				self.roll_points += fives*50
 				self.dice.pop(5)
 				return self.roll_points, self.dice
-			self.roll_points +=500
+			self.roll_points += 500
 			if fives == 4: 
 				self.roll_points *= 2
 			elif fives == 5: 
@@ -71,18 +66,18 @@ class Score():
 			return self.roll_points, self.dice
 		pass
 
-	def ThreePair(self):
+	def three_pair(self):
 		counter = 0
 		for i in self.dice:
-			if self.dice.get(i)==2: 
-				counter +=1
-		if counter==3:
-			self.roll_points +=750
+			if self.dice.get(i) == 2: 
+				counter += 1
+		if counter == 3:
+			self.roll_points += 750
 			self.dice = {}
 			return self.roll_points, self.dice
 		pass
 
-	def Multiples(self):
+	def multiples(self):
 		"""For every three of a kind, you get the value
 		of the die*100. Then for every additional matching die,
 		you get an increasing mulitplier that starts at 2."""
@@ -100,16 +95,18 @@ class Score():
 		self.roll_points += function_points
 		return self.roll_points, self.dice
 
-	def Zilch(self):
-		print("Oh no! You've lost all your points. Round over.")
+	def zilch(self):
+		"""If players roll no points, they lose their points for the whole
+		round and lose the turn."""
+		print("\nZILCH! You've lost all your points. Round over. :(")
 		self.zilched = True
 
-	def MasterScorer(self):	
+	def master_scorer(self):	
 		while self.dice:
-			Score.StraightChecker(self) 
-			Score.ThreePair(self) 
-			Score.OneChecker(self)
-			Score.FiveChecker(self)
+			Score.straight_checker(self) 
+			Score.three_pair(self) 
+			Score.one_checker(self)
+			Score.five_checker(self)
 			"""Our scorer will stop when dice is empty.
 			We've scored everything that has less than
 			a pair. So we can just clean out anything less
@@ -118,17 +115,13 @@ class Score():
 			it'll shut off the bonus round. It deletes, the empty
 			dice first."""
 			for i in self.dice.copy():
-				if self.dice.get(i) == 0:
+				if self.dice.get(i) < 3:
 					self.dice.pop(i)
-				elif self.dice.get(i) < 3:
-					self.dice.pop(i)
-					self.TurnOffBonusRound()
-					print("check")
-			Score.Multiples(self)
+			Score.multiples(self)
 			if self.roll_points == 0: #check if there is a zilch
-				self.Zilch()
+				self.zilch()
 				break
-		return self.roll_points, self.bonus_round
+		return self.roll_points
 
 
 """
