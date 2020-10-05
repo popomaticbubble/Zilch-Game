@@ -1,1 +1,1 @@
-This is a zilch game for my brother
+This is a zilch game for my brother. It is my first project using Python. I'm currently working on a version using a GUI. At the point of making this, I knew little about design patterns. I'm sure I'll cringe if I look at it now.
